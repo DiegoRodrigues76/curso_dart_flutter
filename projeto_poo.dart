@@ -18,6 +18,11 @@ class Pessoa {
     required this.dataCadastro,
     required this.dataNascimento,
   });
+
+  // Método para exibir informações
+  void exibirInformacoes() {
+    print('Pessoa: $nome (ID: $id)');
+  }
 }
 
 class Fornecedor extends Pessoa {
@@ -53,6 +58,43 @@ class Fornecedor extends Pessoa {
           dataCadastro: dataCadastro,
           dataNascimento: dataNascimento,
         );
+
+  @override
+  void exibirInformacoes() {
+    super.exibirInformacoes(); // Chama o método da superclasse (Pessoa)
+    print('Fornecedor CNPJ: $cnpj, Endereço: $logradouro, $bairro, $cidade - $estado');
+  }
+}
+
+class Cliente extends Pessoa {
+  String endereco;
+
+  Cliente({
+    required String id,
+    required String nome,
+    required String cpf,
+    required String rg,
+    required String telefone,
+    required String email,
+    required DateTime dataCadastro,
+    required DateTime dataNascimento,
+    required this.endereco,
+  }) : super(
+          id: id,
+          nome: nome,
+          cpf: cpf,
+          rg: rg,
+          telefone: telefone,
+          email: email,
+          dataCadastro: dataCadastro,
+          dataNascimento: dataNascimento,
+        );
+
+  @override
+  void exibirInformacoes() {
+    super.exibirInformacoes(); // Chama o método da superclasse (Pessoa)
+    print('Cliente Endereço: $endereco, Telefone: $telefone');
+  }
 }
 
 class Produto {
@@ -72,94 +114,38 @@ class Produto {
     required this.dataCadastro,
   });
 
-  static List<Produto> _produtos = [];
-
-  void cadastrarProduto() {
-    _produtos.add(this);
-    print('Produto ${this.nome} cadastrado com sucesso!');
+  // Método para exibir informações do produto
+  void exibirInformacoes() {
+    print('Produto: $nome (ID: $id), Fornecedor: ${fornecedor.nome}');
   }
 
-  static Produto? buscarProdutoPorNome(String nome) {
-    for (var produto in _produtos) {
-      if (produto.nome.toLowerCase() == nome.toLowerCase()) {
-        return produto;
-      }
-    }
-    print('Produto $nome não encontrado.');
-    return null;
-  }
-
+  // Método de exemplo para listar produtos
   static List<Produto> listarProdutos() {
-    return _produtos;
-  }
-
-  void deletarProduto() {
-    _produtos.remove(this);
-    print('Produto ${this.nome} deletado com sucesso!');
-  }
-}
-
-class Estoque {
-  Produto produto;
-  int quantidade;
-  String armazen;
-  String prateleira;
-
-  Estoque({
-    required this.produto,
-    required this.quantidade,
-    required this.armazen,
-    required this.prateleira,
-  });
-
-  static List<Estoque> _estoque = [];
-
-  void adicionarEstoque(int quantidadeAdicional) {
-    this.quantidade += quantidadeAdicional;
-    print(
-        'Adicionado $quantidadeAdicional do produto ${produto.nome} ao estoque.');
-  }
-
-  void removerEstoque(int quantidadeRemover) {
-    if (this.quantidade >= quantidadeRemover) {
-      this.quantidade -= quantidadeRemover;
-      print(
-          'Removido $quantidadeRemover do produto ${produto.nome} do estoque.');
-    } else {
-      print('Quantidade insuficiente no estoque para remover.');
-    }
-  }
-
-  static void atualizarEstoque(Produto produto, int novaQuantidade) {
-    for (var item in _estoque) {
-      if (item.produto.id == produto.id) {
-        item.quantidade = novaQuantidade;
-        print(
-            'Estoque do produto ${produto.nome} atualizado para $novaQuantidade.');
-        return;
-      }
-    }
-    print('Produto ${produto.nome} não encontrado no estoque.');
-  }
-
-  static List<Estoque> listarProdutosDisponiveis() {
-    return _estoque;
-  }
-
-  void cadastrarEstoque() {
-    _estoque.add(this);
-    print('Estoque para o produto ${produto.nome} cadastrado com sucesso!');
+    // implementação de exemplo
+    return [];
   }
 }
 
 void main() {
-  // Criando um fornecedor
-  Fornecedor fornecedor = Fornecedor(
+  // Criando uma pessoa
+  Pessoa pessoa = Pessoa(
     id: '1',
-    nome: 'Fornecedor A',
+    nome: 'João Silva',
     cpf: '000.000.000-00',
     rg: '00.000.000-0',
     telefone: '(11) 99999-9999',
+    email: 'joao@example.com',
+    dataCadastro: DateTime.now(),
+    dataNascimento: DateTime(1980, 1, 1),
+  );
+
+  // Criando um fornecedor
+  Fornecedor fornecedor = Fornecedor(
+    id: '2',
+    nome: 'Fornecedor A',
+    cpf: '111.111.111-11',
+    rg: '11.111.111-1',
+    telefone: '(11) 99999-9998',
     email: 'fornecedor@example.com',
     dataCadastro: DateTime.now(),
     dataNascimento: DateTime(1980, 1, 1),
@@ -171,52 +157,36 @@ void main() {
     cep: '00000-000',
   );
 
-  // Criando um produto
+  // Criando um cliente
+  Cliente cliente = Cliente(
+    id: '3',
+    nome: 'Maria Souza',
+    cpf: '222.222.222-22',
+    rg: '22.222.222-2',
+    telefone: '(11) 99999-9997',
+    email: 'maria@example.com',
+    dataCadastro: DateTime.now(),
+    dataNascimento: DateTime(1990, 5, 10),
+    endereco: 'Avenida X, 123',
+  );
+
+  // Lista de pessoas
+  List<Pessoa> pessoas = [pessoa, fornecedor, cliente];
+
+  // Iterando sobre a lista e exibindo informações
+  for (var p in pessoas) {
+    p.exibirInformacoes(); // Chamada polimórfica
+  }
+
+  // Criando um produto e exibindo suas informações
   Produto produto = Produto(
-    id: '1',
+    id: '001',
     codigo: 'P001',
-    nome: 'Produto 1',
-    descricao: 'Descrição do Produto 1',
+    nome: 'Produto X',
+    descricao: 'Descrição do Produto X',
     fornecedor: fornecedor,
     dataCadastro: DateTime.now(),
   );
 
-  // Cadastrando o produto
-  produto.cadastrarProduto();
-
-  // Adicionando produto ao estoque
-  Estoque estoque = Estoque(
-    produto: produto,
-    quantidade: 100,
-    armazen: 'A1',
-    prateleira: 'P1',
-  );
-  estoque.cadastrarEstoque();
-
-  // Atualizando o estoque
-  estoque.adicionarEstoque(50);
-
-  // Removendo produtos do estoque
-  estoque.removerEstoque(30);
-
-  // Listando produtos disponíveis no estoque
-  List<Estoque> produtosDisponiveis = Estoque.listarProdutosDisponiveis();
-  for (var item in produtosDisponiveis) {
-    print('Produto: ${item.produto.nome}, Quantidade: ${item.quantidade}');
-  }
-
-  // Buscando um produto por nome
-  Produto? produtoBuscado = Produto.buscarProdutoPorNome('Produto 1');
-  if (produtoBuscado != null) {
-    print('Produto encontrado: ${produtoBuscado.nome}');
-  }
-
-  // Deletando um produto
-  produto.deletarProduto();
-
-  // Listando todos os produtos
-  List<Produto> todosProdutos = Produto.listarProdutos();
-  for (var prod in todosProdutos) {
-    print('Produto: ${prod.nome}');
-  }
+  produto.exibirInformacoes();
 }
